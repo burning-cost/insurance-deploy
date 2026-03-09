@@ -14,7 +14,7 @@ How do you run the challenger alongside the champion without disrupting live pri
 
 Every UK pricing team faces this. Most solve it with ad-hoc scripts, spreadsheet logs, and informal sign-off. This library provides the infrastructure.
 
-**Blog post:** [Champion/Challenger Pricing: The Infrastructure Problem](https://burning-cost.github.io/2026/02/14/champion-challenger-pricing-infrastructure/) — worked example of the full workflow, the routing determinism guarantee, and why loss ratio significance takes 18 months.
+**Blog post:** [Your Champion/Challenger Test Has No Audit Trail](https://burning-cost.github.io/2026/03/09/your-champion-challenger-test-has-no-audit-trail/) — worked example of the full workflow, the routing determinism guarantee, and why loss ratio significance takes 18 months.
 
 ---
 
