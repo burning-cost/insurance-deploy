@@ -264,7 +264,9 @@ class TestBootstrapCIProperties:
         true_diff = 0.0  # H0: no difference
 
         for rep in range(n_reps):
-            logger = make_logger(tmp_dir / f"rep_{rep}")
+            subdir = tmp_dir / f"rep_{rep}"
+            subdir.mkdir(parents=True, exist_ok=True)
+            logger = make_logger(subdir)
             populate_two_arm_data(
                 logger, n_champ=200, n_chall=80,
                 champ_claim_freq=0.08, chall_claim_freq=0.08,

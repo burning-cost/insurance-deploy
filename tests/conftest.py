@@ -104,8 +104,8 @@ def populated_logger(logger, experiment):
     rng = __import__("random").Random(42)
     base_ts = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    # Generate 1000 champion, 100 challenger quotes
-    all_pids = [f"POL-{i:05d}" for i in range(1100)]
+    # Generate 1000 champion, 300 challenger quotes
+    all_pids = [f"POL-{i:05d}" for i in range(1300)]
     champion_pids = all_pids[:1000]
     challenger_pids = all_pids[1000:]
 
