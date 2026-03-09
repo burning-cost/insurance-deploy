@@ -315,11 +315,13 @@ class KPITracker:
 
         # Latest incurred per (policy_id, claim_date) at >= development_months
         claim_incurred: dict[tuple, float] = {}
+        claim_dm: dict[tuple, int] = {}
         for c in claims:
             if c["development_month"] >= development_months:
                 key = (c["policy_id"], c["claim_date"])
-                if key not in claim_incurred or c["development_month"] > claim_incurred.get(("_dm_" + str(key)), -1):
+                if c["development_month"] > claim_dm.get(key, -1):
                     claim_incurred[key] = c["claim_amount"]
+                    claim_dm[key] = c["development_month"]
 
         result = {}
         for arm in ("champion", "challenger"):
