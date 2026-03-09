@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
 import sqlite3
 import tempfile
 from datetime import date, datetime, timezone, timedelta
@@ -35,30 +36,28 @@ class DummyModel:
 # Fixtures
 # ---------------------------------------------------------------------------
 
-# tmp_dir is module-scoped so all fixtures in a module share one SQLite file.
-# This avoids writing 1100 rows per test function (33 tests * 1100 writes = 36k).
-@pytest.fixture(scope="module")
+@pytest.fixture
 def tmp_dir():
     with tempfile.TemporaryDirectory() as d:
         yield Path(d)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def registry(tmp_dir):
     return ModelRegistry(tmp_dir / "registry")
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def champion_model():
     return DummyModel(constant=400.0)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def challenger_model():
     return DummyModel(constant=420.0)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def champion_mv(registry, champion_model):
     return registry.register(
         champion_model, name="motor", version="1.0",
@@ -66,7 +65,7 @@ def champion_mv(registry, champion_model):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def challenger_mv(registry, challenger_model):
     return registry.register(
         challenger_model, name="motor", version="2.0",
@@ -74,7 +73,7 @@ def challenger_mv(registry, challenger_model):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def experiment(champion_mv, challenger_mv):
     return Experiment(
         name="motor_v2_vs_v1",
@@ -85,32 +84,33 @@ def experiment(champion_mv, challenger_mv):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def logger(tmp_dir):
     return QuoteLogger(tmp_dir / "quotes.db")
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def tracker(logger):
     return KPITracker(logger)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def comparison(tracker):
     return ModelComparison(tracker)
 
 
-@pytest.fixture(scope="module")
-def populated_logger(logger, experiment):
-    """Logger with synthetic champion/challenger quote/bind/claim data.
+# ---------------------------------------------------------------------------
+# Pre-built DB snapshot — session-scoped so the 1100 SQLite writes happen
+# once per test session. populated_logger copies this snapshot into each
+# test's logger so the comparison fixture still reads from the same file.
+# ---------------------------------------------------------------------------
 
-    Module-scoped so the 1100 synchronous SQLite writes are only done once
-    per test module, not once per test function.
-    """
+def _build_populated_db(db_path: Path, experiment_name: str = "motor_v2_vs_v1") -> None:
+    """Write 1100 synthetic quotes/binds/claims into a QuoteLogger DB."""
+    log = QuoteLogger(db_path)
     rng = __import__("random").Random(42)
     base_ts = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    # Generate 1000 champion, 100 challenger quotes
     all_pids = [f"POL-{i:05d}" for i in range(1100)]
     champion_pids = all_pids[:1000]
     challenger_pids = all_pids[1000:]
@@ -120,33 +120,64 @@ def populated_logger(logger, experiment):
         price = rng.gauss(400, 50)
         price = max(100, price)
         enbp = price + rng.gauss(10, 5)
-        logger.log_quote(
-            pid, experiment.name, "champion", "motor:1.0",
+        log.log_quote(
+            pid, experiment_name, "champion", "motor:1.0",
             quoted_price=price, enbp=enbp, renewal_flag=True,
             exposure=1.0, timestamp=ts,
         )
-        # ~30% bind rate
         if rng.random() < 0.30:
-            logger.log_bind(pid, bound_price=price, bound_timestamp=ts + timedelta(hours=2))
-            # ~8% claim frequency
+            log.log_bind(pid, bound_price=price, bound_timestamp=ts + timedelta(hours=2))
             if rng.random() < 0.08:
-                logger.log_claim(pid, claim_date=date(2024, 6, 1),
-                                 claim_amount=rng.gauss(1500, 500), development_month=12)
+                log.log_claim(pid, claim_date=date(2024, 6, 1),
+                              claim_amount=rng.gauss(1500, 500), development_month=12)
 
     for i, pid in enumerate(challenger_pids):
         ts = base_ts + timedelta(days=i)
         price = rng.gauss(410, 50)
         price = max(100, price)
         enbp = price + rng.gauss(10, 5)
-        logger.log_quote(
-            pid, experiment.name, "challenger", "motor:2.0",
+        log.log_quote(
+            pid, experiment_name, "challenger", "motor:2.0",
             quoted_price=price, enbp=enbp, renewal_flag=True,
             exposure=1.0, timestamp=ts,
         )
-        if rng.random() < 0.28:  # slightly lower hit rate
-            logger.log_bind(pid, bound_price=price, bound_timestamp=ts + timedelta(hours=2))
+        if rng.random() < 0.28:
+            log.log_bind(pid, bound_price=price, bound_timestamp=ts + timedelta(hours=2))
             if rng.random() < 0.075:
-                logger.log_claim(pid, claim_date=date(2024, 6, 1),
-                                 claim_amount=rng.gauss(1400, 500), development_month=12)
+                log.log_claim(pid, claim_date=date(2024, 6, 1),
+                              claim_amount=rng.gauss(1400, 500), development_month=12)
 
+
+@pytest.fixture(scope="session")
+def _populated_db_snapshot(tmp_path_factory):
+    """Build the populated SQLite snapshot once per session.
+
+    This is an implementation detail consumed by ``populated_logger``.
+    """
+    db_dir = tmp_path_factory.mktemp("snapshot")
+    db_path = db_dir / "populated.db"
+    _build_populated_db(db_path)
+    return db_path
+
+
+@pytest.fixture
+def populated_logger(logger, experiment, _populated_db_snapshot):
+    """Logger pre-loaded with 1100 synthetic quote/bind/claim rows.
+
+    The SQLite data is built once per session (``_populated_db_snapshot``)
+    and copied into each test's isolated ``logger`` DB file before the test
+    runs. This keeps tests fully isolated (function-scoped) while avoiding
+    the 1100-write overhead on every test.
+
+    The ``logger`` fixture is the same instance used by ``tracker`` and
+    ``comparison``, so those fixtures automatically see the populated data.
+    """
+    # Copy snapshot into the test's logger DB (which starts as an empty file
+    # created by QuoteLogger.__init__). SQLite's backup API handles open
+    # connections safely.
+    src = sqlite3.connect(str(_populated_db_snapshot))
+    dst = sqlite3.connect(str(logger.path))
+    src.backup(dst)
+    src.close()
+    dst.close()
     return logger
