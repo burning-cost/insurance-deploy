@@ -14,6 +14,8 @@ How do you run the challenger alongside the champion without disrupting live pri
 
 Every UK pricing team faces this. Most solve it with ad-hoc scripts, spreadsheet logs, and informal sign-off. This library provides the infrastructure.
 
+**Blog post:** [Champion/Challenger Pricing: The Infrastructure Problem](https://burning-cost.github.io/2026/02/14/champion-challenger-pricing-infrastructure/) — worked example of the full workflow, the routing determinism guarantee, and why loss ratio significance takes 18 months.
+
 ---
 
 ## Regulatory context
@@ -46,6 +48,8 @@ Five modules:
 ## Install
 
 ```bash
+uv add insurance-deploy
+# or
 pip install insurance-deploy
 ```
 
@@ -332,6 +336,43 @@ It does not handle: model training, rate optimisation (see `insurance-optimise`)
 
 ---
 
-## License
+## Other Burning Cost libraries
 
-MIT
+**Model building**
+
+| Library | Description |
+|---------|-------------|
+| [shap-relativities](https://github.com/burning-cost/shap-relativities) | Extract rating relativities from GBMs using SHAP |
+| [insurance-interactions](https://github.com/burning-cost/insurance-interactions) | Automated GLM interaction detection via CANN and NID scores |
+| [insurance-cv](https://github.com/burning-cost/insurance-cv) | Walk-forward cross-validation respecting IBNR structure |
+
+**Uncertainty quantification**
+
+| Library | Description |
+|---------|-------------|
+| [insurance-conformal](https://github.com/burning-cost/insurance-conformal) | Distribution-free prediction intervals for Tweedie models |
+| [bayesian-pricing](https://github.com/burning-cost/bayesian-pricing) | Hierarchical Bayesian models for thin-data segments |
+| [credibility](https://github.com/burning-cost/credibility) | Bühlmann-Straub credibility weighting |
+
+**Deployment and optimisation**
+
+| Library | Description |
+|---------|-------------|
+| [insurance-elasticity](https://github.com/burning-cost/insurance-elasticity) | Causal price elasticity via Double Machine Learning |
+| [rate-optimiser](https://github.com/burning-cost/rate-optimiser) | Constrained rate change optimisation with FCA PS21/5 compliance |
+
+**Governance**
+
+| Library | Description |
+|---------|-------------|
+| [insurance-fairness](https://github.com/burning-cost/insurance-fairness) | Proxy discrimination auditing for UK insurance models |
+| [insurance-validation](https://github.com/burning-cost/insurance-validation) | PRA SS1/23 model validation reports |
+| [insurance-monitoring](https://github.com/burning-cost/insurance-monitoring) | Model monitoring: PSI, A/E ratios, Gini drift test |
+
+[All libraries and blog posts →](https://burning-cost.github.io)
+
+---
+
+## Licence
+
+MIT. Part of the [Burning Cost](https://github.com/burning-cost) insurance pricing toolkit.
