@@ -1,4 +1,5 @@
 # insurance-deploy
+[![Tests](https://github.com/burning-cost/insurance-deploy/actions/workflows/tests.yml/badge.svg)](https://github.com/burning-cost/insurance-deploy/actions/workflows/tests.yml)
 
 Champion/challenger pricing framework for UK insurance — model registry, quote routing, ENBP audit logging, and statistical promotion tests.
 
