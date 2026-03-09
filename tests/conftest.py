@@ -172,12 +172,8 @@ def populated_logger(logger, experiment, _populated_db_snapshot):
     The ``logger`` fixture is the same instance used by ``tracker`` and
     ``comparison``, so those fixtures automatically see the populated data.
     """
-    # Copy snapshot into the test's logger DB (which starts as an empty file
-    # created by QuoteLogger.__init__). SQLite's backup API handles open
-    # connections safely.
-    src = sqlite3.connect(str(_populated_db_snapshot))
-    dst = sqlite3.connect(str(logger.path))
-    src.backup(dst)
-    src.close()
-    dst.close()
+    # Overwrite the test's empty logger DB with the populated snapshot.
+    # QuoteLogger closes its connection after _initialise_schema(), so there
+    # are no open connections to worry about at this point.
+    shutil.copy2(_populated_db_snapshot, logger.path)
     return logger
