@@ -337,6 +337,21 @@ It does not handle: model training, rate optimisation (see `insurance-optimise`)
 
 ---
 
+---
+
+## Capabilities Demo
+
+Demonstrated on synthetic UK motor data (10,000 policies), registering two models (GLM-style logistic vs CatBoost challenger), running a shadow experiment, logging quotes, computing KPIs, and generating an ENBP compliance report. Full notebook: `notebooks/benchmark.py`.
+
+- Model registry with hash verification — deterministic model identification; every quote can be traced to the exact model version that priced it
+- Shadow-mode experiment routing — challenger scores without affecting customer price; configurable traffic split with hash-based determinism so the same quote always routes to the same arm
+- Append-only SQLite quote audit log with ENBP compliance flagging per policy — directly addresses ICOBS 6B.2.51R (the rule 83% of firms failed in the FCA's 2023 multi-firm review)
+- Statistical promotion tests: bootstrap loss ratio test, z-test on hit rate, Poisson frequency test — tells you when the data actually support promotion rather than relying on eyeballing means
+- KPI tracker: hit rate, GWP, loss ratio, frequency — all computed from the quote log, not from a separate analysis file
+
+**When to use:** Any pricing team running a challenger model that needs an auditable trail between quote and model version. The FCA can and does ask which model priced a specific renewal; an email thread and a folder name is not an acceptable answer.
+
+
 ## Other Burning Cost libraries
 
 **Model building**
