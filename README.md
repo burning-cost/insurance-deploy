@@ -371,21 +371,21 @@ Run `notebooks/benchmark.py` on Databricks to reproduce.
 |---------|-------------|
 | [insurance-conformal](https://github.com/burning-cost/insurance-conformal) | Distribution-free prediction intervals for Tweedie models |
 | [bayesian-pricing](https://github.com/burning-cost/bayesian-pricing) | Hierarchical Bayesian models for thin-data segments |
-| [credibility](https://github.com/burning-cost/credibility) | Bühlmann-Straub credibility weighting |
+| [insurance-credibility](https://github.com/burning-cost/insurance-credibility) | Bühlmann-Straub credibility weighting |
 
 **Deployment and optimisation**
 
 | Library | Description |
 |---------|-------------|
 | [insurance-elasticity](https://github.com/burning-cost/insurance-elasticity) | Causal price elasticity via Double Machine Learning |
-| [rate-optimiser](https://github.com/burning-cost/rate-optimiser) | Constrained rate change optimisation with FCA PS21/5 compliance |
+| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation with FCA PS21/5 compliance |
 
 **Governance**
 
 | Library | Description |
 |---------|-------------|
 | [insurance-fairness](https://github.com/burning-cost/insurance-fairness) | Proxy discrimination auditing for UK insurance models |
-| [insurance-validation](https://github.com/burning-cost/insurance-validation) | PRA SS1/23 model validation reports |
+| [insurance-governance](https://github.com/burning-cost/insurance-governance) | PRA SS1/23 model validation reports |
 | [insurance-monitoring](https://github.com/burning-cost/insurance-monitoring) | Model monitoring: PSI, A/E ratios, Gini drift test |
 
 [All libraries and blog posts →](https://burning-cost.github.io)
