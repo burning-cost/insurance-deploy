@@ -392,6 +392,15 @@ Run `notebooks/benchmark.py` on Databricks to reproduce.
 
 ---
 
+
+## Related Libraries
+
+| Library | What it does |
+|---------|-------------|
+| [insurance-governance](https://github.com/burning-cost/insurance-governance) | PRA SS1/23 model validation — deploy requires governance sign-off; this library produces the documentation |
+| [insurance-monitoring](https://github.com/burning-cost/insurance-monitoring) | Post-deployment model monitoring — PSI, A/E ratios, and Gini drift tracking for deployed models |
+| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation — determines the rates the deployment pipeline serves |
+
 ## Licence
 
 MIT. Part of the [Burning Cost](https://github.com/burning-cost) insurance pricing toolkit.
