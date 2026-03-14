@@ -363,6 +363,11 @@ It does not handle: model training, rate optimisation (see `insurance-optimise`)
 
 ---
 
+
+## Databricks Notebook
+
+A ready-to-run Databricks notebook benchmarking this library against standard approaches is available in [burning-cost-examples](https://github.com/burning-cost/burning-cost-examples/blob/main/notebooks/champion_challenger_deployment.py).
+
 ## Other Burning Cost libraries
 
 **Model building**
