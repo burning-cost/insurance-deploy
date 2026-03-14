@@ -318,3 +318,56 @@ class QuoteLogger:
                     (experiment_name,),
                 ).fetchone()[0]
             return conn.execute("SELECT COUNT(*) FROM quotes").fetchone()[0]
+
+    def to_polars(self, table: str = "quotes") -> "pl.DataFrame":
+        """Return the specified table as a Polars DataFrame.
+
+        Parameters
+        ----------
+        table:
+            One of "quotes", "binds", "claims". Defaults to "quotes".
+
+        Returns
+        -------
+        polars.DataFrame
+        """
+        try:
+            import polars as pl
+        except ImportError as exc:
+            raise ImportError(
+                "polars is required for to_polars(). Install it with: pip install polars"
+            ) from exc
+        if table not in ("quotes", "binds", "claims"):
+            raise ValueError(f"Unknown table {table!r}. Choose from: quotes, binds, claims")
+        with self._connect() as conn:
+            cur = conn.execute(f"SELECT * FROM {table}")  # noqa: S608
+            cols = [d[0] for d in cur.description]
+            rows = cur.fetchall()
+        if not rows:
+            return pl.DataFrame({c: [] for c in cols})
+        return pl.DataFrame([dict(zip(cols, row)) for row in rows])
+
+    def to_pandas(self, table: str = "quotes") -> "pd.DataFrame":
+        """Return the specified table as a pandas DataFrame.
+
+        Parameters
+        ----------
+        table:
+            One of "quotes", "binds", "claims". Defaults to "quotes".
+
+        Returns
+        -------
+        pandas.DataFrame
+        """
+        try:
+            import pandas as pd
+        except ImportError as exc:
+            raise ImportError(
+                "pandas is required for to_pandas(). Install it with: pip install pandas"
+            ) from exc
+        if table not in ("quotes", "binds", "claims"):
+            raise ValueError(f"Unknown table {table!r}. Choose from: quotes, binds, claims")
+        rows = self.query_quotes() if table == "quotes" else (
+            self.query_binds() if table == "binds" else self.query_claims()
+        )
+        return pd.DataFrame(rows)
