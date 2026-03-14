@@ -223,6 +223,8 @@ print(md)  # Markdown: paste into attestation pack or Databricks notebook
 
 [`champion_challenger_deployment.py`](https://github.com/burning-cost/burning-cost-examples/blob/main/examples/champion_challenger_deployment.py) runs the full deployment lifecycle on synthetic motor data: shadow mode experiment setup, per-quote logging with ENBP compliance flags, bootstrap likelihood-ratio test for model promotion, an ENBP audit report, and the power analysis that sets realistic stakeholder expectations on timeline. A practical reference for any team building their first FCA-compliant champion/challenger setup.
 
+A Databricks-importable version is also available: [Databricks notebook](https://github.com/burning-cost/burning-cost-examples/blob/main/notebooks/champion_challenger_deployment.py).
+
 
 ---
 
