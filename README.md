@@ -317,7 +317,7 @@ If your ENBP calculation is wrong, the log is wrong — but that is upstream of 
 
 ## Databricks companion notebook
 
-`notebooks/insurance_deploy_demo.py` demonstrates the full workflow on synthetic data:
+`notebooks/benchmark.py` demonstrates the full workflow on synthetic data:
 - Model registry setup
 - Experiment configuration and routing verification
 - Quote/bind/claim data generation and logging
@@ -337,20 +337,23 @@ It does not handle: model training, rate optimisation (see `insurance-optimise`)
 
 ---
 
+## Performance
+
+This library is a deployment and governance framework, not a predictive model — so there is no vs-baseline accuracy comparison. The benchmark notebook demonstrates the full workflow on synthetic UK motor data (10,000 policies) rather than testing predictive lift.
+
+What the notebook validates:
+
+**Routing determinism:** SHA-256 hash-based routing produces the expected 20% challenger allocation (configurable) within 0.5 percentage points across 10,000 policies. The same policy_id always routes to the same arm within a named experiment, which is required for ENBP audit integrity.
+
+**Statistical test calibration:** the three promotion tests — hit rate z-test, Poisson frequency test, and bootstrap loss ratio test (10,000 iterations, policy-level resampling) — are demonstrated on a champion (GLM-logistic) vs challenger (CatBoost) pair with known Gini separation. Under shadow mode with identical prices for both arms, the bootstrap LR test is expected to return `INSUFFICIENT_EVIDENCE` at typical experiment volumes, reflecting the true statistical difficulty of detecting a 3pp loss ratio improvement.
+
+**Power analysis:** at 20% challenger allocation and 10,000 total policies, the power analysis is expected to report approximately 18–24 months to loss ratio significance (including 12-month claim development). This matches the theoretical calculation and is the honest answer about champion/challenger timelines.
+
+**ENBP compliance rate:** with a 2% intentional breach rate injected into the synthetic data, the ENBP audit report is expected to flag approximately 2% of renewal quotes as non-compliant, confirming the logger records and surfaces breaches correctly.
+
+Run `notebooks/benchmark.py` on Databricks to reproduce.
+
 ---
-
-## Capabilities Demo
-
-Demonstrated on synthetic UK motor data (10,000 policies), registering two models (GLM-style logistic vs CatBoost challenger), running a shadow experiment, logging quotes, computing KPIs, and generating an ENBP compliance report. Full notebook: `notebooks/benchmark.py`.
-
-- Model registry with hash verification — deterministic model identification; every quote can be traced to the exact model version that priced it
-- Shadow-mode experiment routing — challenger scores without affecting customer price; configurable traffic split with hash-based determinism so the same quote always routes to the same arm
-- Append-only SQLite quote audit log with ENBP compliance flagging per policy — directly addresses ICOBS 6B.2.51R (the rule 83% of firms failed in the FCA's 2023 multi-firm review)
-- Statistical promotion tests: bootstrap loss ratio test, z-test on hit rate, Poisson frequency test — tells you when the data actually support promotion rather than relying on eyeballing means
-- KPI tracker: hit rate, GWP, loss ratio, frequency — all computed from the quote log, not from a separate analysis file
-
-**When to use:** Any pricing team running a challenger model that needs an auditable trail between quote and model version. The FCA can and does ask which model priced a specific renewal; an email thread and a folder name is not an acceptable answer.
-
 
 ## Other Burning Cost libraries
 
