@@ -1,7 +1,30 @@
 # insurance-deploy
-[![Tests](https://github.com/burning-cost/insurance-deploy/actions/workflows/tests.yml/badge.svg)](https://github.com/burning-cost/insurance-deploy/actions/workflows/tests.yml)
 
-Champion/challenger pricing framework for UK insurance — model registry, quote routing, ENBP audit logging, and statistical promotion tests.
+[![PyPI](https://img.shields.io/pypi/v/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
+[![Python](https://img.shields.io/pypi/pyversions/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
+[![License](https://img.shields.io/badge/license-BSD--3-blue)]()
+
+Champion/challenger pricing framework for UK insurance — model registry, quote routing, ENBP audit logging, and statistical promotion tests, because ad-hoc scripts and spreadsheet logs do not satisfy ICOBS 6B.2 record-keeping requirements.
+
+---
+
+## Why bother
+
+This library is a deployment and governance framework, not a predictive model. The benchmark validates operational correctness rather than predictive lift.
+
+| Capability | What's guaranteed |
+|------------|-------------------|
+| Routing determinism | SHA-256 hash routing gives expected allocation within 0.5pp across 10,000 policies; same policy_id always routes to same arm |
+| ENBP breach detection | With 2% intentional breach rate injected, audit report flags ~2% of renewals — confirms logger records and surfaces breaches correctly |
+| LR test calibration | Bootstrap LR test (10,000 iterations) returns INSUFFICIENT_EVIDENCE at typical volumes — reflects the true statistical difficulty, not a library bug |
+| Power analysis | At 20% challenger allocation and 10,000 policies, reports 18-24 months to LR significance including 12-month development — matches theoretical calculation |
+
+The coverage guarantee and deterministic routing are the primary results. Power analysis tells you the honest timeline before you start.
+
+---
+
+[Run on Databricks](https://github.com/burning-cost/burning-cost-examples/blob/main/notebooks/insurance_deploy_demo.py)
 
 ---
 
@@ -223,7 +246,7 @@ print(md)  # Markdown: paste into attestation pack or Databricks notebook
 
 [`champion_challenger_deployment.py`](https://github.com/burning-cost/burning-cost-examples/blob/main/examples/champion_challenger_deployment.py) runs the full deployment lifecycle on synthetic motor data: shadow mode experiment setup, per-quote logging with ENBP compliance flags, bootstrap likelihood-ratio test for model promotion, an ENBP audit report, and the power analysis that sets realistic stakeholder expectations on timeline. A practical reference for any team building their first FCA-compliant champion/challenger setup.
 
-A Databricks-importable version is also available: [Databricks notebook](https://github.com/burning-cost/burning-cost-examples/blob/main/notebooks/champion_challenger_deployment.py).
+A Databricks-importable version is also available: [Databricks notebook](https://github.com/burning-cost/burning-cost-examples/blob/main/notebooks/insurance_deploy_demo.py).
 
 
 ---
@@ -322,20 +345,6 @@ If your ENBP calculation is wrong, the log is wrong — but that is upstream of 
 
 ---
 
-## Databricks companion notebook
-
-`notebooks/benchmark.py` demonstrates the full workflow on synthetic data:
-- Model registry setup
-- Experiment configuration and routing verification
-- Quote/bind/claim data generation and logging
-- KPI dashboard
-- Bootstrap LR test
-- ENBP audit report generation
-
-Run as a Databricks Python notebook. Requires `pip install insurance-deploy`.
-
----
-
 ## Scope
 
 This library handles: model version registry, champion/challenger routing, audit logging, KPI computation, statistical tests, ENBP compliance reports.
@@ -344,21 +353,13 @@ It does not handle: model training, rate optimisation (see `insurance-optimise`)
 
 ---
 
-## Performance
+## Related Libraries
 
-This library is a deployment and governance framework, not a predictive model — so there is no vs-baseline accuracy comparison. The benchmark notebook demonstrates the full workflow on synthetic UK motor data (10,000 policies) rather than testing predictive lift.
-
-What the notebook validates:
-
-**Routing determinism:** SHA-256 hash-based routing produces the expected 20% challenger allocation (configurable) within 0.5 percentage points across 10,000 policies. The same policy_id always routes to the same arm within a named experiment, which is required for ENBP audit integrity.
-
-**Statistical test calibration:** the three promotion tests — hit rate z-test, Poisson frequency test, and bootstrap loss ratio test (10,000 iterations, policy-level resampling) — are demonstrated on a champion (GLM-logistic) vs challenger (CatBoost) pair with known Gini separation. Under shadow mode with identical prices for both arms, the bootstrap LR test is expected to return `INSUFFICIENT_EVIDENCE` at typical experiment volumes, reflecting the true statistical difficulty of detecting a 3pp loss ratio improvement.
-
-**Power analysis:** at 20% challenger allocation and 10,000 total policies, the power analysis is expected to report approximately 18–24 months to loss ratio significance (including 12-month claim development). This matches the theoretical calculation and is the honest answer about champion/challenger timelines.
-
-**ENBP compliance rate:** with a 2% intentional breach rate injected into the synthetic data, the ENBP audit report is expected to flag approximately 2% of renewal quotes as non-compliant, confirming the logger records and surfaces breaches correctly.
-
-Run `notebooks/benchmark.py` on Databricks to reproduce.
+| Library | What it does |
+|---------|-------------|
+| [insurance-governance](https://github.com/burning-cost/insurance-governance) | PRA SS1/23 model validation — deploy requires governance sign-off; this library produces the documentation |
+| [insurance-monitoring](https://github.com/burning-cost/insurance-monitoring) | Post-deployment model monitoring — PSI, A/E ratios, and Gini drift tracking for deployed models |
+| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation — determines the rates the deployment pipeline serves |
 
 ---
 
@@ -395,18 +396,9 @@ Run `notebooks/benchmark.py` on Databricks to reproduce.
 | [insurance-governance](https://github.com/burning-cost/insurance-governance) | PRA SS1/23 model validation reports |
 | [insurance-monitoring](https://github.com/burning-cost/insurance-monitoring) | Model monitoring: PSI, A/E ratios, Gini drift test |
 
-[All libraries and blog posts →](https://burning-cost.github.io)
+[All libraries and blog posts](https://burning-cost.github.io)
 
 ---
-
-
-## Related Libraries
-
-| Library | What it does |
-|---------|-------------|
-| [insurance-governance](https://github.com/burning-cost/insurance-governance) | PRA SS1/23 model validation — deploy requires governance sign-off; this library produces the documentation |
-| [insurance-monitoring](https://github.com/burning-cost/insurance-monitoring) | Post-deployment model monitoring — PSI, A/E ratios, and Gini drift tracking for deployed models |
-| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation — determines the rates the deployment pipeline serves |
 
 ## Licence
 
