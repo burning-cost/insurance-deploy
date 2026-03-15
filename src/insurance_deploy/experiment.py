@@ -132,7 +132,7 @@ class Experiment:
         digest = hashlib.sha256(key).hexdigest()
         # Last 8 hex chars = 32-bit integer, modulo 100 gives 0-99
         slot = int(digest[-8:], 16) % 100
-        threshold = int(self.challenger_pct * 100)
+        threshold = round(self.challenger_pct * 100)
         return "challenger" if slot < threshold else "champion"
 
     def live_model(self, policy_id: str) -> ModelVersion:
@@ -151,13 +151,16 @@ class Experiment:
         """
         Return the ModelVersion that should score in shadow (not price the quote).
 
-        In shadow mode, returns challenger for challenger-routed policies,
-        and champion (again) for champion-routed policies.
-        In live mode, returns the non-live model.
+        In shadow mode, always returns challenger for ALL policies. The whole
+        point of shadow mode is to score every quote through the challenger so
+        you get a full population comparison — not just the ~10% hash-routed
+        to the challenger bucket. Routing is irrelevant here.
+        In live mode, returns the non-live model (i.e. the arm not serving
+        the customer).
         """
-        arm = self.route(policy_id)
         if self.mode == "shadow":
-            return self.challenger if arm == "challenger" else self.champion
+            return self.challenger
+        arm = self.route(policy_id)
         return self.champion if arm == "challenger" else self.challenger
 
     # ------------------------------------------------------------------

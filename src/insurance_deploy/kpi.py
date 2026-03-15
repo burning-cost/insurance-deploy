@@ -483,12 +483,15 @@ class KPITracker:
         hr_n = _two_proportion_sample_size(p_bar, target_delta_hr, alpha, power)
         hr_months = hr_n / monthly_chall if monthly_chall > 0 else float("inf")
 
-        # Loss ratio: rough approximation using normal approximation
+        # Loss ratio: two-sample comparison (champion arm vs challenger arm)
         # LR variance approximated from observed data or assumed sigma
         # Typical motor LR ~0.65 with CV ~0.4, so sigma_lr ~0.26
+        # We need N bound policies per arm, not N quotes — divide by hit rate (UK motor ~0.30)
         sigma_lr = 0.26
-        lr_n = _one_sample_mean_sample_size(sigma_lr, target_delta_lr, alpha, power)
-        lr_months_to_bind = lr_n / monthly_chall if monthly_chall > 0 else float("inf")
+        hit_rate_est = p_bar if not math.isnan(p_bar) and p_bar > 0 else 0.30
+        lr_n = _two_sample_mean_sample_size(sigma_lr, target_delta_lr, alpha, power)
+        lr_quotes_needed = lr_n / hit_rate_est  # quotes needed to get lr_n bound policies
+        lr_months_to_bind = lr_quotes_needed / monthly_chall if monthly_chall > 0 else float("inf")
         lr_total = lr_months_to_bind + DEFAULT_LR_MIN_DEVELOPMENT  # bind + develop
 
         notes = []
@@ -500,8 +503,8 @@ class KPITracker:
         if months_elapsed < 1:
             notes.append("Less than 1 month of data — monthly rate estimates unreliable.")
         notes.append(
-            f"LR estimate assumes motor sigma_LR ≈ 0.26 and "
-            f"{DEFAULT_LR_MIN_DEVELOPMENT}-month development period. "
+            f"LR estimate assumes motor sigma_LR ≈ 0.26, hit rate ≈ {hit_rate_est:.0%}, "
+            f"and {DEFAULT_LR_MIN_DEVELOPMENT}-month development period (two-sample test). "
             "Home insurance or long-tail lines will take longer."
         )
         notes.append(
@@ -517,9 +520,11 @@ class KPITracker:
             "monthly_rate_challenger": monthly_chall,
             "hr_required_n_per_arm": hr_n,
             "hr_months_to_significance": hr_months,
-            "lr_required_n_per_arm": lr_n,
+            "lr_required_bound_n_per_arm": lr_n,
+            "lr_required_quotes_per_arm": math.ceil(lr_quotes_needed),
             "lr_months_to_bind": lr_months_to_bind,
             "lr_total_months_with_development": lr_total,
+            "assumed_hit_rate": hit_rate_est,
             "target_delta_lr": target_delta_lr,
             "target_delta_hr": target_delta_hr,
             "notes": notes,
@@ -599,3 +604,17 @@ def _one_sample_mean_sample_size(
     z_beta = stats.norm.ppf(power)
     n = ((z_alpha + z_beta) ** 2 * sigma ** 2) / (delta ** 2)
     return max(1, math.ceil(n))
+
+
+def _two_sample_mean_sample_size(
+    sigma: float, delta: float, alpha: float, power: float
+) -> int:
+    """
+    Two-sample mean test sample size per arm.
+
+    Champion vs challenger LR is a two-sample comparison: both arms have
+    variance, so N per arm is doubled versus the one-sample formula.
+
+    N_per_arm = 2 * (z_alpha/2 + z_beta)^2 * sigma^2 / delta^2
+    """
+    return 2 * _one_sample_mean_sample_size(sigma, delta, alpha, power)

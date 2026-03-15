@@ -219,10 +219,11 @@ class ModelComparison:
         ci_lower = float(np.percentile(boot_diffs, 2.5))
         ci_upper = float(np.percentile(boot_diffs, 97.5))
 
-        # One-sided p-value: P(challenger LR >= champion LR | H0: no difference)
+        # One-sided p-value: P(challenger LR <= champion LR | H0: no difference)
         # Under H0, centre bootstrap distribution around 0
+        # We want P(boot_diff <= observed diff) — small p means challenger reliably better
         centred = boot_diffs - np.mean(boot_diffs)
-        p_value = float(np.mean(centred >= point_diff))
+        p_value = float(np.mean(centred <= point_diff))
         p_value = max(1.0 / n_bootstrap, p_value)  # avoid exact zero
 
         conclusion, recommendation = _conclude(

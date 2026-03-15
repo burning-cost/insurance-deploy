@@ -298,7 +298,15 @@ class QuoteLogger:
         return [dict(r) for r in rows]
 
     def query_binds(self) -> list[dict]:
-        """Return all bind records."""
+        """Return all bind records.
+
+        Known limitation: binds table has no experiment_name column — it is
+        scoped only by policy_id. A policy_id is assumed to belong to at most
+        one active experiment at a time (the standard UK motor use case). If
+        you run overlapping experiments on the same policy population, binds
+        will not be correctly isolated per experiment. Future work: add an
+        optional experiment_name column to the binds schema.
+        """
         with self._connect() as conn:
             rows = conn.execute("SELECT * FROM binds ORDER BY bound_timestamp").fetchall()
         return [dict(r) for r in rows]

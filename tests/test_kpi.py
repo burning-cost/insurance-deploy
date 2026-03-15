@@ -257,7 +257,7 @@ class TestPowerAnalysis:
     def test_power_analysis_keys(self, tracker):
         pa = tracker.power_analysis("exp")
         assert "hr_required_n_per_arm" in pa
-        assert "lr_required_n_per_arm" in pa
+        assert "lr_required_bound_n_per_arm" in pa
         assert "lr_total_months_with_development" in pa
         assert "notes" in pa
 
@@ -265,7 +265,7 @@ class TestPowerAnalysis:
         tracker = KPITracker(populated_logger)
         pa = tracker.power_analysis(experiment.name)
         assert pa["hr_required_n_per_arm"] > 0
-        assert pa["lr_required_n_per_arm"] > 0
+        assert pa["lr_required_bound_n_per_arm"] > 0
 
     def test_power_analysis_lr_includes_development_period(self, populated_logger, experiment):
         tracker = KPITracker(populated_logger)
@@ -282,7 +282,7 @@ class TestPowerAnalysis:
         tracker = KPITracker(populated_logger)
         pa_small = tracker.power_analysis(experiment.name, target_delta_lr=0.01)
         pa_large = tracker.power_analysis(experiment.name, target_delta_lr=0.05)
-        assert pa_small["lr_required_n_per_arm"] > pa_large["lr_required_n_per_arm"]
+        assert pa_small["lr_required_bound_n_per_arm"] > pa_large["lr_required_bound_n_per_arm"]
 
     def test_power_analysis_summary_report(self, populated_logger, experiment):
         tracker = KPITracker(populated_logger)

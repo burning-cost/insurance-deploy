@@ -61,7 +61,7 @@ class TestExperimentRouting:
         key = (policy_id + experiment.name).encode()
         digest = hashlib.sha256(key).hexdigest()
         slot = int(digest[-8:], 16) % 100
-        threshold = int(experiment.challenger_pct * 100)
+        threshold = round(experiment.challenger_pct * 100)
         expected = "challenger" if slot < threshold else "champion"
         assert experiment.route(policy_id) == expected
 
