@@ -9,7 +9,7 @@ Champion/challenger pricing framework for UK insurance — model registry, quote
 
 ---
 
-## Why bother
+## Performance
 
 This library is a deployment and governance framework, not a predictive model. The benchmark validates operational correctness rather than predictive lift.
 
