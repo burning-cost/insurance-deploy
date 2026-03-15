@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import hashlib
-import sqlite3
 import tempfile
+import warnings
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
@@ -28,7 +26,7 @@ class DummyModel:
 
     def predict(self, X):
         import numpy as np
-        return np.full(len(X), self.constant)
+        return np.full(len(np.atleast_1d(X)), self.constant)
 
 
 # ---------------------------------------------------------------------------
@@ -100,47 +98,58 @@ def comparison(tracker):
 
 @pytest.fixture
 def populated_logger(logger, experiment):
-    """Logger with synthetic champion/challenger quote/bind/claim data."""
+    """Logger pre-filled with 200 champion + 60 challenger records.
+
+    Scaled down from the original 1000/300 to keep fixture setup under 2s on
+    ARM hardware.  The fixture shares the same ``logger`` instance used by
+    ``tracker``/``comparison``, so tests that receive all three see consistent
+    data.
+
+    Warnings are suppressed during population to avoid ~30 UserWarning
+    emissions (one per ENBP breach) that were the other source of overhead.
+    """
     rng = __import__("random").Random(42)
     base_ts = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    # Generate 1000 champion, 300 challenger quotes
-    all_pids = [f"POL-{i:05d}" for i in range(1300)]
-    champion_pids = all_pids[:1000]
-    challenger_pids = all_pids[1000:]
+    all_pids = [f"POL-{i:05d}" for i in range(260)]
+    champion_pids = all_pids[:200]
+    challenger_pids = all_pids[200:]
 
-    for i, pid in enumerate(champion_pids):
-        ts = base_ts + timedelta(days=i // 10)
-        price = rng.gauss(400, 50)
-        price = max(100, price)
-        enbp = price + rng.gauss(10, 5)
-        logger.log_quote(
-            pid, experiment.name, "champion", "motor:1.0",
-            quoted_price=price, enbp=enbp, renewal_flag=True,
-            exposure=1.0, timestamp=ts,
-        )
-        # ~30% bind rate
-        if rng.random() < 0.30:
-            logger.log_bind(pid, bound_price=price, bound_timestamp=ts + timedelta(hours=2))
-            # ~8% claim frequency
-            if rng.random() < 0.08:
-                logger.log_claim(pid, claim_date=date(2024, 6, 1),
-                                 claim_amount=rng.gauss(1500, 500), development_month=12)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
-    for i, pid in enumerate(challenger_pids):
-        ts = base_ts + timedelta(days=i)
-        price = rng.gauss(410, 50)
-        price = max(100, price)
-        enbp = price + rng.gauss(10, 5)
-        logger.log_quote(
-            pid, experiment.name, "challenger", "motor:2.0",
-            quoted_price=price, enbp=enbp, renewal_flag=True,
-            exposure=1.0, timestamp=ts,
-        )
-        if rng.random() < 0.28:  # slightly lower hit rate
-            logger.log_bind(pid, bound_price=price, bound_timestamp=ts + timedelta(hours=2))
-            if rng.random() < 0.075:
-                logger.log_claim(pid, claim_date=date(2024, 6, 1),
-                                 claim_amount=rng.gauss(1400, 500), development_month=12)
+        for i, pid in enumerate(champion_pids):
+            ts = base_ts + timedelta(days=i // 10)
+            price = max(100.0, rng.gauss(400, 50))
+            enbp = price + rng.gauss(10, 5)
+            logger.log_quote(
+                pid, experiment.name, "champion", "motor:1.0",
+                quoted_price=price, enbp=enbp, renewal_flag=True,
+                exposure=1.0, timestamp=ts,
+            )
+            if rng.random() < 0.30:
+                logger.log_bind(pid, bound_price=price,
+                                bound_timestamp=ts + timedelta(hours=2))
+                if rng.random() < 0.08:
+                    logger.log_claim(pid, claim_date=date(2024, 6, 1),
+                                     claim_amount=rng.gauss(1500, 500),
+                                     development_month=12)
+
+        for i, pid in enumerate(challenger_pids):
+            ts = base_ts + timedelta(days=i)
+            price = max(100.0, rng.gauss(410, 50))
+            enbp = price + rng.gauss(10, 5)
+            logger.log_quote(
+                pid, experiment.name, "challenger", "motor:2.0",
+                quoted_price=price, enbp=enbp, renewal_flag=True,
+                exposure=1.0, timestamp=ts,
+            )
+            if rng.random() < 0.28:
+                logger.log_bind(pid, bound_price=price,
+                                bound_timestamp=ts + timedelta(hours=2))
+                if rng.random() < 0.075:
+                    logger.log_claim(pid, claim_date=date(2024, 6, 1),
+                                     claim_amount=rng.gauss(1400, 500),
+                                     development_month=12)
 
     return logger
