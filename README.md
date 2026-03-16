@@ -28,6 +28,43 @@ The coverage guarantee and deterministic routing are the primary results. Power 
 
 ---
 
+## Benchmark Results
+
+Benchmarked on 5,000 synthetic motor quotes: 20% challenger allocation, shadow mode, 60% renewals. See `benchmarks/benchmark.py`.
+
+**Routing determinism**
+
+100 policies re-routed after initial assignment: all 100 match (determinism check passes). Challenger fraction in sample: 19.4% vs target 20% — within expected variance at this volume.
+
+**Hit rate z-test (immediate)**
+
+| Arm        | Quoted | Bound | Hit rate |
+|------------|--------|-------|----------|
+| Champion   | 4,030  | 1,196 | 29.7%    |
+| Challenger | 970    | 294   | 30.3%    |
+
+z-test conclusion: INSUFFICIENT_EVIDENCE (p=0.699). This is the expected result at 5,000 quotes — 0.6pp difference is not detectable at this volume.
+
+**Power analysis (3pp target LR improvement)**
+
+At 20% challenger allocation and 5,000 total quotes: estimated 12 months to loss ratio significance including 12-month development tail. The power analysis makes the timeline explicit before stakeholders commit to the experiment.
+
+**Capability comparison: manual vs library**
+
+| Capability                                    | Manual   | Library       |
+|-----------------------------------------------|----------|---------------|
+| Per-quote model version log                   | No       | Yes           |
+| Routing reproducible from first principles    | No       | Yes           |
+| ENBP breach detection                         | No       | Yes           |
+| Statistical promotion test (hit rate)         | Informal | z-test        |
+| Statistical promotion test (loss ratio)       | None     | Bootstrap LR  |
+| Power analysis (months to significance)       | Guessing | Computed      |
+| ICOBS 6B.2.51R audit report                   | No       | Yes           |
+
+Run time: approximately 110 seconds on ARM64 Raspberry Pi (dominated by 5,000 quote logging loop; production use with a real database would be similar or faster).
+
+---
+
 ## The problem
 
 You've built a better pricing model. CatBoost instead of GLM, or an updated GLM with two years more data and a rebuilt rating factor for NCB. The model validates well in holdout. Your actuarial team wants to deploy it.
