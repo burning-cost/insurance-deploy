@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "insurance-deploy"
-version = "0.1.4"
+version = "0.1.5"
 description = "Champion/challenger pricing framework for UK insurance — model registry, quote routing, ENBP audit logging, and statistical promotion tests"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -37,7 +37,7 @@ from .kpi import KPITracker
 from .comparison import ModelComparison, ComparisonResult
 from .audit import ENBPAuditReport
 
-__version__ = "0.1.1"
+__version__ = "0.1.5"
 __all__ = [
     "ModelRegistry",
     "ModelVersion",

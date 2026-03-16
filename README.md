@@ -173,6 +173,8 @@ logger.log_claim("POL-12345", claim_date=date(2024, 8, 1),
 
 ### Track KPIs
 
+> **Shadow mode note:** In shadow mode, the champion prices every quote. Hit rate, GWP, and loss ratio comparisons between champion and challenger arms reflect routing assignment only — not different prices shown to customers. Any difference in KPIs is driven by selection into the cohort, not by model quality. KPI comparisons between arms are only meaningful in live mode, where the challenger prices its allocated fraction of quotes.
+
 ```python
 from insurance_deploy import KPITracker
 
@@ -197,7 +199,7 @@ print(lr)
 pa = tracker.power_analysis("motor_v3_vs_v2", target_delta_lr=0.03)
 print(f"Months to LR significance (incl. 12m development): "
       f"{pa['lr_total_months_with_development']:.0f}")
-# Months to LR significance (incl. 12m development): 28
+# Months to LR significance (incl. 12m development): 29
 ```
 
 ### Statistical comparison
@@ -391,7 +393,7 @@ A ready-to-run Databricks notebook benchmarking this library against standard ap
 | Library | Description |
 |---------|-------------|
 | [insurance-elasticity](https://github.com/burning-cost/insurance-elasticity) | Causal price elasticity via Double Machine Learning |
-| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation with FCA PS21/5 compliance |
+| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation with FCA PS21/11 compliance |
 
 **Governance**
 
