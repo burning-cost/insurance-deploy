@@ -111,7 +111,7 @@ Five modules:
 ```bash
 uv add insurance-deploy
 # or
-pip install insurance-deploy
+uv add insurance-deploy
 ```
 
 Dependencies: NumPy, SciPy, Pandas, joblib.
