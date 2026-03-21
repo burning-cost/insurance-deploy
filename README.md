@@ -116,6 +116,8 @@ pip install insurance-deploy
 
 Dependencies: NumPy, SciPy, Pandas, joblib.
 
+> 💬 Questions or feedback? Start a [Discussion](https://github.com/burning-cost/insurance-deploy/discussions). Found it useful? A ⭐ helps others find it.
+
 ---
 
 ## Quick start
