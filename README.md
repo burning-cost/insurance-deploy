@@ -396,15 +396,11 @@ It does not handle: model training, rate optimisation (see `insurance-optimise`)
 
 ## Related Libraries
 
-| Library | What it does |
+| Library | Description |
 |---------|-------------|
-| [insurance-governance](https://github.com/burning-cost/insurance-governance) | PRA SS1/23 model validation — deploy requires governance sign-off; this library produces the documentation |
 | [insurance-monitoring](https://github.com/burning-cost/insurance-monitoring) | Post-deployment model monitoring — PSI, A/E ratios, and Gini drift tracking for deployed models |
+| [insurance-governance](https://github.com/burning-cost/insurance-governance) | PRA SS1/23 model validation — deploy requires governance sign-off; this library produces the documentation |
 | [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation — determines the rates the deployment pipeline serves |
-
----
-
-
 ## Databricks Notebook
 
 A ready-to-run Databricks notebook benchmarking this library against standard approaches is available in [burning-cost-examples](https://github.com/burning-cost/burning-cost-examples/blob/main/notebooks/champion_challenger_deployment.py).
