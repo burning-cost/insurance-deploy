@@ -45,6 +45,8 @@ Benchmarked on 5,000 synthetic motor quotes: 20% challenger allocation, shadow m
 
 z-test conclusion: INSUFFICIENT_EVIDENCE (p=0.699). This is the expected result at 5,000 quotes — 0.6pp difference is not detectable at this volume.
 
+> **Shadow mode note:** In shadow mode, both arms receive the champion price — any hit rate difference between arms reflects random cohort assignment, not model quality. Hit rate comparisons between arms are only meaningful in live mode, where the challenger prices its allocated fraction of quotes.
+
 **Power analysis (3pp target LR improvement)**
 
 At 20% challenger allocation and 5,000 total quotes: estimated 12 months to loss ratio significance including 12-month development tail. The power analysis makes the timeline explicit before stakeholders commit to the experiment.
@@ -428,7 +430,7 @@ A ready-to-run Databricks notebook benchmarking this library against standard ap
 | Library | Description |
 |---------|-------------|
 | [insurance-elasticity](https://github.com/burning-cost/insurance-elasticity) | Causal price elasticity via Double Machine Learning |
-| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation with FCA PS21/11 compliance |
+| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation with FCA PS21/5 compliance |
 
 **Governance**
 
