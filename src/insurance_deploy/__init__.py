@@ -37,7 +37,12 @@ from .kpi import KPITracker
 from .comparison import ModelComparison, ComparisonResult
 from .audit import ENBPAuditReport
 
-__version__ = "0.1.5"
+from importlib.metadata import version, PackageNotFoundError
+
+try:
+    __version__ = version("insurance-deploy")
+except PackageNotFoundError:
+    __version__ = "0.0.0"  # not installed
 __all__ = [
     "ModelRegistry",
     "ModelVersion",
