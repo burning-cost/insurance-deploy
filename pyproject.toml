@@ -9,14 +9,20 @@ description = "Champion/challenger pricing framework for UK insurance — model 
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+authors = [
+    { name = "Burning Cost", email = "pricing.frontier@gmail.com" },
+]
 keywords = [
     "insurance", "actuarial", "champion-challenger", "pricing",
-    "ENBP", "FCA", "model-registry", "loss-ratio", "UK-insurance"
+    "ENBP", "FCA", "model-registry", "loss-ratio", "UK-insurance",
+    "model-deployment", "personal lines",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Office/Business :: Financial",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -37,10 +43,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/burning-cost/insurance-deploy"
+Homepage = "https://burning-cost.github.io/insurance-deploy"
 Repository = "https://github.com/burning-cost/insurance-deploy"
-"Bug Tracker" = "https://github.com/burning-cost/insurance-deploy/issues"
-Documentation = "https://github.com/burning-cost/insurance-deploy#readme"
+Changelog = "https://github.com/burning-cost/insurance-deploy/releases"
+Documentation = "https://burning-cost.github.io/insurance-deploy"
+Issues = "https://github.com/burning-cost/insurance-deploy/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/insurance_deploy"]
