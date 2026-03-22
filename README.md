@@ -4,6 +4,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/burning-cost/insurance-deploy/blob/main/notebooks/quickstart.ipynb)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/burning-cost/insurance-deploy/blob/main/notebooks/quickstart.ipynb)
 
@@ -124,7 +125,7 @@ Five modules:
 ```bash
 uv add insurance-deploy
 # or
-uv add insurance-deploy
+pip install insurance-deploy
 ```
 
 Dependencies: NumPy, SciPy, Pandas, joblib.
@@ -403,7 +404,7 @@ If your ENBP calculation is wrong, the log is wrong — but that is upstream of 
 
 This library handles: model version registry, champion/challenger routing, audit logging, KPI computation, statistical tests, ENBP compliance reports.
 
-It does not handle: model training, rate optimisation (see `insurance-optimise`), model drift monitoring (see `insurance-monitor`), causal effect estimation (see `insurance-causal-policy`), or real-time API infrastructure.
+It does not handle: model training, rate optimisation (see `insurance-optimise`), model drift monitoring (see `insurance-monitoring`), causal effect estimation (see `insurance-causal-policy`), or real-time API infrastructure.
 
 ---
 
