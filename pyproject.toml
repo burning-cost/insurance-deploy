@@ -55,8 +55,3 @@ packages = ["src/insurance_deploy"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
-
-[dependency-groups]
-dev = [
-    "pytest>=9.0.2",
-]
