@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
 [![Python](https://img.shields.io/pypi/pyversions/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
-[![License](https://img.shields.io/badge/license-BSD--3-blue)]()
+[![License](https://img.shields.io/badge/license-MIT-green)]()
 
 Champion/challenger pricing framework for UK insurance — model registry, quote routing, ENBP audit logging, and statistical promotion tests, because ad-hoc scripts and spreadsheet logs do not satisfy ICOBS 6B.2 record-keeping requirements.
 
@@ -118,7 +118,7 @@ uv add insurance-deploy
 
 Dependencies: NumPy, SciPy, Pandas, joblib.
 
-> 💬 Questions or feedback? Start a [Discussion](https://github.com/burning-cost/insurance-deploy/discussions). Found it useful? A ⭐ helps others find it.
+> Questions or feedback? Start a [Discussion](https://github.com/burning-cost/insurance-deploy/discussions). Found it useful? A star helps others find it.
 
 ---
 
