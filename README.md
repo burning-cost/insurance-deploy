@@ -5,6 +5,8 @@
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/burning-cost/insurance-deploy/blob/main/notebooks/quickstart.ipynb)
+
 Champion/challenger pricing framework for UK insurance — model registry, quote routing, ENBP audit logging, and statistical promotion tests, because ad-hoc scripts and spreadsheet logs do not satisfy ICOBS 6B.2 record-keeping requirements.
 
 ---
