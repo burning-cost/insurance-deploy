@@ -1,6 +1,7 @@
 # insurance-deploy
 
 [![PyPI](https://img.shields.io/pypi/v/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
+[![Downloads](https://img.shields.io/pypi/dm/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
 [![Python](https://img.shields.io/pypi/pyversions/insurance-deploy)](https://pypi.org/project/insurance-deploy/)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
