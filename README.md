@@ -67,6 +67,15 @@ Run time: approximately 110 seconds on ARM64 Raspberry Pi (dominated by 5,000 qu
 
 ---
 
+## Limitations
+
+- **Claims development lag**: loss ratio significance typically requires 18+ months of data. Bodily injury claims can take 36+ months to develop fully — any LR comparison before then is based on incurred estimates, not settled figures.
+- **Shadow mode latency**: dual-model scoring in shadow mode adds one extra model inference per quote. Negligible for batch scoring; measurable in synchronous quote APIs if the challenger model is expensive.
+- **Independence assumption**: the bootstrap LR test assumes quotes are independent observations. Portfolios with strong broker or fleet clustering may need cluster-robust resampling instead.
+- **Routing hash is permanent**: the deterministic SHA-256 assignment cannot be rebalanced mid-experiment without breaking consistency. If you need to change the challenger allocation percentage, start a new experiment with a new name.
+
+---
+
 ## The problem
 
 You've built a better pricing model. CatBoost instead of GLM, or an updated GLM with two years more data and a rebuilt rating factor for NCB. The model validates well in holdout. Your actuarial team wants to deploy it.
